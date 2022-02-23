@@ -9,7 +9,6 @@ This README is just a fast *quick start* document. You can find more detailed do
 What is Redis?
 --------------
 Redis是何物？
--------------
 
 Redis is often referred to as a *data structures* server. What this means is that Redis provides access to mutable data structures via a set of commands, which are sent using a *server-client* model with TCP sockets and a simple protocol. So different processes can query and modify the same data structures in a shared way.
 Redis通常被称为一个*数据结构*服务器。意味着Redis通过一组命令提供了对可变数据结构的访问，这些命令是使用一个带有TCP套接字和简单协议的*server-client*模型发送的。
@@ -41,7 +40,6 @@ If you want to know more, this is a list of selected starting points:
 Building Redis
 --------------
 编译Redis
----------
 
 Redis can be compiled and used on Linux, OSX, OpenBSD, NetBSD, FreeBSD.
 We support big endian and little endian architectures, and both 32 bit
@@ -94,7 +92,6 @@ installed):
 Fixing build problems with dependencies or cached build options
 ---------
 修复依赖项或缓存构建选项的构建问题（deps下有一些依赖，如果有改动需要make clean，这个我们自己也经常遇到，可以单独研究一下g++的编译依赖）
--------------------------------------------------------------------------------------------------------------------------------------
 
 Redis has some dependencies which are included in the `deps` directory.
 `make` does not automatically rebuild dependencies even if something in
