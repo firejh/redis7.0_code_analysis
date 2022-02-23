@@ -17,11 +17,11 @@ Data structures implemented into Redis have a few special properties:
 在Redis中实现的数据结构有几个特殊的属性:
 
 * Redis cares to store them on disk, even if they are always served and modified into the server memory. This means that Redis is fast, but that it is also non-volatile.
-* Redis关心磁盘存储，即使他们总是操作内存。这意味着Redis是快速的，但它也是非易失性的。（总结是可以磁盘存储，数据会不丢失。但是不丢失的代价是什么，这是要探究的。）
+Redis关心磁盘存储，即使他们总是操作内存。这意味着Redis是快速的，但它也是非易失性的。（总结是可以磁盘存储，数据会不丢失。但是不丢失的代价是什么，这是要探究的。）
 * The implementation of data structures emphasizes memory efficiency, so data structures inside Redis will likely use less memory compared to the same data structure modelled using a high-level programming language.
-* 数据结构的实现强调了内存效率，因此与使用高级编程语言建模的相同数据结构相比，Redis内部的数据结构可能会使用更少的内存。（使用自己的数据结构，比c++的STL容器更适合redis，性能会更优。）
+数据结构的实现强调了内存效率，因此与使用高级编程语言建模的相同数据结构相比，Redis内部的数据结构可能会使用更少的内存。（使用自己的数据结构，比c++的STL容器更适合redis，性能会更优。）
 * Redis offers a number of features that are natural to find in a database, like replication, tunable levels of durability, clustering, and high availability.
-* Redis提供了许多在数据库中很容易找到的特性，比如复制、可调级别的持久性、集群和高可用性。（一些支持的特性）
+Redis提供了许多在数据库中很容易找到的特性，比如复制、可调级别的持久性、集群和高可用性。（一些支持的特性）
 
 Another good example is to think of Redis as a more complex version of memcached, where the operations are not just SETs and GETs, but operations that work with complex data types like Lists, Sets, ordered data structures, and so forth.
 类似memecached但是功能更多，直接忽略吧~
@@ -29,13 +29,13 @@ Another good example is to think of Redis as a more complex version of memcached
 If you want to know more, this is a list of selected starting points:
 
 * Introduction to Redis data types. https://redis.io/topics/data-types-intro
-* 介绍Redis数据类型
+介绍Redis数据类型
 * Try Redis directly inside your browser. https://try.redis.io
-* 直接在浏览器中尝试Redis，网页版客户端
+直接在浏览器中尝试Redis，网页版客户端
 * The full list of Redis commands. https://redis.io/commands
-* Redis命令的完整列表，会经常用的
+Redis命令的完整列表，会经常用的
 * There is much more inside the official Redis documentation. https://redis.io/documentation
-* 官方文档
+官方文档
 
 Building Redis
 --------------
