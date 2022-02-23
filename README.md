@@ -1,4 +1,4 @@
-# 说明：
+说明：
 -------
 针对中国开发者添加redis注释，本文件是原始redis说明的描述以及部分翻译注释，具体的代码阅读文档见[code_analysis.md](https://github.com/firejh/redis7.0_code_analysis/edit/main/README.md)说明。
 
