@@ -112,6 +112,7 @@ command.
 
 Fixing problems building 32 bit binaries
 ---------
+要 make distclean
 
 If after building Redis with a 32 bit target you need to rebuild it
 with a 64 bit target, or the other way around, you need to perform a
@@ -126,6 +127,7 @@ the following steps:
 
 Allocator
 ---------
+内存分配器，默认使用jemalloc，可以减少内存碎片
 
 Selecting a non-default memory allocator when building Redis is done by setting
 the `MALLOC` environment variable. Redis is compiled and linked against libc
@@ -143,6 +145,8 @@ To compile against jemalloc on Mac OS X systems, use:
 
 Monotonic clock
 ---------------
+单调的时钟，clock_gettime经过linux和x86的优化不需要用户和内核的上线文切换，性能得到优化，但是性能代价依然搞，无法满足一些性能敏感的应用程序的延迟测量需求。
+可以使用处理器时钟。
 
 By default, Redis will build using the POSIX clock_gettime function as the
 monotonic clock source.  On most modern systems, the internal processor clock
@@ -155,6 +159,7 @@ To build with support for the processor's internal instruction clock, use:
 
 Verbose build
 -------------
+构建，可以看详细的输出
 
 Redis will build with a user-friendly colorized output by default.
 If you want to see a more verbose output, use the following:
@@ -163,6 +168,7 @@ If you want to see a more verbose output, use the following:
 
 Running Redis
 -------------
+启动命令
 
 To run Redis with the default configuration, just type:
 
@@ -186,12 +192,14 @@ line, with exactly the same name.
 
 Running Redis with TLS:
 ------------------
+TLS（Transport Layer Security，安全传输层)，TLS是建立在传输层TCP协议之上的协议，服务于应用层，它的前身是SSL（Secure Socket Layer，安全套接字层），它实现了将应用层的报文进行加密后再交由TCP进行传输的功能。加密一般是不需要的。
 
 Please consult the [TLS.md](TLS.md) file for more information on
 how to use Redis with TLS.
 
 Playing with Redis
 ------------------
+客户端操作
 
 You can use redis-cli to play with Redis. Start a redis-server instance,
 then in another terminal try the following:
@@ -214,6 +222,7 @@ You can find the list of all the available commands at https://redis.io/commands
 
 Installing Redis
 -----------------
+安装，可以编译时指定安装目录
 
 In order to install Redis binaries into /usr/local/bin, just use:
 
@@ -242,6 +251,7 @@ You'll be able to stop and start Redis using the script named
 
 Code contributions
 -----------------
+代码共享方式
 
 Note: By contributing code to the Redis project in any form, including sending
 a pull request via Github, a code fragment or patch via private email or
@@ -258,6 +268,7 @@ information. For security bugs and vulnerabilities, please see [SECURITY.md][3].
 
 Redis internals
 ===
+下面将对代码说明，但是只是一个高层面的说明，不会有代码细节
 
 If you are reading this README you are likely in front of a Github page
 or you just untarred the Redis distribution tar ball. In both the cases
@@ -272,6 +283,7 @@ to follow.
 
 Source code layout
 ---
+源代码布局，根据路介绍
 
 The Redis root directory just contains this README, the Makefile which
 calls the real Makefile inside the `src` directory and an example
@@ -282,9 +294,9 @@ directory.
 
 Inside the root are the following important directories:
 
-* `src`: contains the Redis implementation, written in C.
-* `tests`: contains the unit tests, implemented in Tcl.
-* `deps`: contains libraries Redis uses. Everything needed to compile Redis is inside this directory; your system just needs to provide `libc`, a POSIX compatible interface and a C compiler. Notably `deps` contains a copy of `jemalloc`, which is the default allocator of Redis under Linux. Note that under `deps` there are also things which started with the Redis project, but for which the main repository is not `redis/redis`.
+* `src`: contains the Redis implementation, written in C. 代码实现目录
+* `tests`: contains the unit tests, implemented in Tcl.测试diamante
+* `deps`: contains libraries Redis uses. Everything needed to compile Redis is inside this directory; your system just needs to provide `libc`, a POSIX compatible interface and a C compiler. Notably `deps` contains a copy of `jemalloc`, which is the default allocator of Redis under Linux. Note that under `deps` there are also things which started with the Redis project, but for which the main repository is not `redis/redis`. 一些库
 
 There are a few more directories but they are not very important for our goals
 here. We'll focus mostly on `src`, where the Redis implementation is contained,
@@ -301,7 +313,6 @@ requests should be performed against the `unstable` branch.
 
 server.h
 ---
-
 The simplest way to understand how a program works is to understand the
 data structures it uses. So we'll start from the main header file of
 Redis, which is `server.h`.
@@ -335,6 +346,7 @@ struct client {
 }
 ```
 The client structure defines a *connected client*:
+
 
 * The `fd` field is the client socket file descriptor.
 * `argc` and `argv` are populated with the command the client is executing, so that functions implementing a given Redis command can read the arguments.
