@@ -295,7 +295,7 @@ directory.
 Inside the root are the following important directories:
 
 * `src`: contains the Redis implementation, written in C. 代码实现目录
-* `tests`: contains the unit tests, implemented in Tcl.测试diamante
+* `tests`: contains the unit tests, implemented in Tcl.测试
 * `deps`: contains libraries Redis uses. Everything needed to compile Redis is inside this directory; your system just needs to provide `libc`, a POSIX compatible interface and a C compiler. Notably `deps` contains a copy of `jemalloc`, which is the default allocator of Redis under Linux. Note that under `deps` there are also things which started with the Redis project, but for which the main repository is not `redis/redis`. 一些库
 
 There are a few more directories but they are not very important for our goals
@@ -316,22 +316,30 @@ server.h
 The simplest way to understand how a program works is to understand the
 data structures it uses. So we'll start from the main header file of
 Redis, which is `server.h`.
+宏定义、数据结构、全局变量、全局函数等等，是阅读代码首先要看的
 
 All the server configuration and in general all the shared state is
 defined in a global structure called `server`, of type `struct redisServer`.
 A few important fields in this structure are:
+所有的服务器配置和共享状态通常都是
+定义在一个名为“server”的全局结构中，类型为“struct redisServer”。
+这个结构中的几个重要领域是:
 
-* `server.db` is an array of Redis databases, where data is stored.
-* `server.commands` is the command table.
-* `server.clients` is a linked list of clients connected to the server.
-* `server.master` is a special client, the master, if the instance is a replica.
+* `server.db` is an array of Redis databases, where data is stored.是一个Redis数据库数组，数据存储在那里。
+* `server.commands` is the command table.是命令表。
+* `server.clients` is a linked list of clients connected to the server.连接到服务器的客户端的链表。
+* `server.master` is a special client, the master, if the instance is a replica.主从用，如果是备份示例，这个是主示例的链接
+
 
 There are tons of other fields. Most fields are commented directly inside
-the structure definition.
+the structure definition. 其他的看代码注释
 
 Another important Redis data structure is the one defining a client.
 In the past it was called `redisClient`, now just `client`. The structure
 has many fields, here we'll just show the main ones:
+另一个重要的Redis数据结构是定义客户端。
+在过去它被称为“redisClient”，现在只是“client”。结构
+有很多字段，这里我们只展示主要的
 ```c
 struct client {
     int fd;
@@ -348,10 +356,10 @@ struct client {
 The client structure defines a *connected client*:
 
 
-* The `fd` field is the client socket file descriptor.
-* `argc` and `argv` are populated with the command the client is executing, so that functions implementing a given Redis command can read the arguments.
-* `querybuf` accumulates the requests from the client, which are parsed by the Redis server according to the Redis protocol and executed by calling the implementations of the commands the client is executing.
-* `reply` and `buf` are dynamic and static buffers that accumulate the replies the server sends to the client. These buffers are incrementally written to the socket as soon as the file descriptor is writeable.
+* The `fd` field is the client socket file descriptor.客户端套接字文件描述符执
+* `argc` and `argv` are populated with the command the client is executing, so that functions implementing a given Redis command can read the arguments.启动参数
+* `querybuf` accumulates the requests from the client, which are parsed by the Redis server according to the Redis protocol and executed by calling the implementations of the commands the client is executing.客户端的请求
+* `reply` and `buf` are dynamic and static buffers that accumulate the replies the server sends to the client. These buffers are incrementally written to the socket as soon as the file descriptor is writeable.收发缓冲区
 
 As you can see in the client structure above, arguments in a command
 are described as `robj` structures. The following is the full `robj`
@@ -372,10 +380,20 @@ object has, and a `refcount`, so that the same object can be referenced
 in multiple places without allocating it multiple times. Finally the `ptr`
 field points to the actual representation of the object, which might vary
 even for the same type, depending on the `encoding` used.
+基本上这个结构可以表示所有基本的Redis数据类型
+字符串，列表，集合，排序集合等等。有趣的是
+它有一个“类型”字段，这样就可以知道给定的类型是什么
+对象有，并且有一个' refcount '，这样同一个对象可以被引用
+在多个地方，而不是多次分配它。最后,“ptr”
+字段指向对象的实际表示，这可能会有所不同
+即使是相同的类型，也取决于所使用的“编码”。
 
 Redis objects are used extensively in the Redis internals, however in order
 to avoid the overhead of indirect accesses, recently in many places
 we just use plain dynamic strings not wrapped inside a Redis object.
+Redis对象在Redis内部被广泛使用，但是
+为了避免间接访问的开销，最近在很多地方
+我们只是使用普通的动态字符串，没有包装在Redis对象中
 
 server.c
 ---
@@ -383,10 +401,12 @@ server.c
 This is the entry point of the Redis server, where the `main()` function
 is defined. The following are the most important steps in order to startup
 the Redis server.
+这是Redis服务器的入口点，这里定义了' main() '函数。以下是启动Redis服务器最重要的步骤。
 
-* `initServerConfig()` sets up the default values of the `server` structure.
-* `initServer()` allocates the data structures needed to operate, setup the listening socket, and so forth.
-* `aeMain()` starts the event loop which listens for new connections.
+* `initServerConfig()` sets up the default values of the `server` structure.设置' server '结构的默认值
+* `initServer()` allocates the data structures needed to operate, setup the listening socket, and so forth.分配操作所需的数据结构，设置侦听套接字，等等。
+* `aeMain()` starts the event loop which listens for new connections.启动监听新连接的事件循环。
+
 
 There are two special functions called periodically by the event loop:
 
