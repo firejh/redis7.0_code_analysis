@@ -1,7 +1,6 @@
 说明：
 -------
-针对中国开发者添加redis注释，本文件是原始redis说明的描述以及部分翻译注释，具体的代码阅读文档见[code_analysis.md](https://github.com/firejh/redis7.0_code_analysis/edit/main/README.md)说明。
-
+添加redis中文注释，本文件是原始redis说明的描述以及部分翻译注释，具体的代码阅读文档见[code_analysis.md](https://github.com/firejh/redis7.0_code_analysis/edit/main/README.md)说明，这里会整体概括阅读总结。另外，源码内部也会部分添加注释。
 
 
 This README is just a fast *quick start* document. You can find more detailed documentation at [redis.io](https://redis.io).
@@ -451,14 +450,15 @@ on disk and by `aof.c` in order to perform the AOF rewrite when the
 append only file gets too big.
 从名字中你可以猜到，这些文件实现了Redis的RDB和AOF持久性。Redis使用一个基于' fork() '系统调用的持久化模型来创建一个与主Redis进程相同(共享)内存内容的进程。
 这个辅助进程将内存的内容转储到磁盘上。
-'rdb.c'使用该函数在磁盘上创建快照，'AOF.c'使用该函数在追加文件太大时执行AOF重写。
+'rdb.c'使用该函数在磁盘上创建快照，'aof.c'使用该函数在追加文件太大时执行AOF重写。
 
 The implementation inside `aof.c` has additional functions in order to
 implement an API that allows commands to append new commands into the AOF
-file as clients execute them.
+file as clients execute them.内部的实现有额外的功能，以实现一个API，允许命令在客户端执行AOF文件时附加新命令
 
 The `call()` function defined inside `server.c` is responsible for calling
 the functions that in turn will write the commands into the AOF.
+在' server.c '中定义的' call() '函数负责调用函数，然后将命令写入AOF
 
 db.c
 ---
@@ -467,19 +467,25 @@ Certain Redis commands operate on specific data types; others are general.
 Examples of generic commands are `DEL` and `EXPIRE`. They operate on keys
 and not on their values specifically. All those generic commands are
 defined inside `db.c`.
+某些Redis命令操作特定的数据类型。
+通用命令的例子是' DEL '和' EXPIRE '。它们作用于键，而不是它们的值。
+所有这些通用命令都定义在' db.c '中。
 
 Moreover `db.c` implements an API in order to perform certain operations
 on the Redis dataset without directly accessing the internal data structures.
+此外，' db.c '实现了一个API，以便在不直接访问内部数据结构的情况下在Redis数据集上执行某些操作
 
 The most important functions inside `db.c` which are used in many command
 implementations are the following:
+' db.c '中最重要的函数在许多命令实现中使用如下:
 
-* `lookupKeyRead()` and `lookupKeyWrite()` are used in order to get a pointer to the value associated to a given key, or `NULL` if the key does not exist.
-* `dbAdd()` and its higher level counterpart `setKey()` create a new key in a Redis database.
-* `dbDelete()` removes a key and its associated value.
-* `emptyDb()` removes an entire single database or all the databases defined.
+* `lookupKeyRead()` and `lookupKeyWrite()` are used in order to get a pointer to the value associated to a given key, or `NULL` if the key does not exist.获得一个指向给定键关联值的指针，或者' NULL '如果该键不存在。
+* `dbAdd()` and its higher level counterpart `setKey()` create a new key in a Redis database.创建新库
+* `dbDelete()` removes a key and its associated value.删除一个键及关联值
+* `emptyDb()` removes an entire single database or all the databases defined.删除数据库或所有已定义的数据库
 
 The rest of the file implements the generic commands exposed to the client.
+文件的其余部分实现向客户机公开的通用命令。
 
 object.c
 ---
@@ -488,11 +494,15 @@ The `robj` structure defining Redis objects was already described. Inside
 `object.c` there are all the functions that operate with Redis objects at
 a basic level, like functions to allocate new objects, handle the reference
 counting and so forth. Notable functions inside this file:
+定义Redis对象的' robj '结构已经描述过了。在' object.c '里面有所有在基本层面上操作Redis对象的函数，比如分配新对象的函数，处理引用计数等等。该文件中值得注意的函数:
 
 * `incrRefCount()` and `decrRefCount()` are used in order to increment or decrement an object reference count. When it drops to 0 the object is finally freed.
+增加或减少对象引用计数。当它降为0时，对象最终被释放。
 * `createObject()` allocates a new object. There are also specialized functions to allocate string objects having a specific content, like `createStringObjectFromLongLong()` and similar functions.
+* 分配一个新对象。还有一些专门的函数来分配具有特定内容的字符串对象，比如' createStringObjectFromLongLong() '和类似的函数
 
 This file also implements the `OBJECT` command.
+该文件还实现了“OBJECT”命令。
 
 replication.c
 ---
@@ -501,16 +511,22 @@ This is one of the most complex files inside Redis, it is recommended to
 approach it only after getting a bit familiar with the rest of the code base.
 In this file there is the implementation of both the master and replica role
 of Redis.
+这是Redis中最复杂的文件之一，建议在熟悉了其余的代码基础后再使用它。
+在这个文件中有Redis的主副本角色的实现。
 
 One of the most important functions inside this file is `replicationFeedSlaves()` that writes commands to the clients representing replica instances connected
 to our master, so that the replicas can get the writes performed by the clients:
 this way their data set will remain synchronized with the one in the master.
+这个文件中最重要的一个函数是replicationFeedSlaves()，它把命令写给连接到主服务器的副本实例的客户端，这样副本就可以得到客户端执行的写操作:
+通过这种方式，它们的数据集将与主服务器中的数据集保持同步。
 
 This file also implements both the `SYNC` and `PSYNC` commands that are
 used in order to perform the first synchronization between masters and
 replicas, or to continue the replication after a disconnection.
+该文件还实现了“SYNC”和“PSYNC”命令，用于在主副本和副本之间执行第一次同步，或在断开连接后继续复制。
 
 Script
+脚本实现，暂时忽略
 ---
 The script unit is compose of 3 units
 * `script.c` - integration of scripts with Redis (commands execution, set replication/resp, ..)
@@ -524,11 +540,17 @@ Other C files
 ---
 
 * `t_hash.c`, `t_list.c`, `t_set.c`, `t_string.c`, `t_zset.c` and `t_stream.c` contains the implementation of the Redis data types. They implement both an API to access a given data type, and the client command implementations for these data types.
+redis数据类型的实现
 * `ae.c` implements the Redis event loop, it's a self contained library which is simple to read and understand.
+实现了Redis事件循环，它是一个自包含的库，易于阅读和理解
 * `sds.c` is the Redis string library, check https://github.com/antirez/sds for more information.
+字符串库
 * `anet.c` is a library to use POSIX networking in a simpler way compared to the raw interface exposed by the kernel.
+与内核公开的原始接口相比，它以更简单的方式使用POSIX网络。
 * `dict.c` is an implementation of a non-blocking hash table which rehashes incrementally.
+非阻塞哈希表的实现，它会递增地重新哈希。
 * `cluster.c` implements the Redis Cluster. Probably a good read only after being very familiar with the rest of the Redis code base. If you want to read `cluster.c` make sure to read the [Redis Cluster specification][4].
+* 先了解用法和其他功能后再阅读
 
 [4]: https://redis.io/topics/cluster-spec
 
