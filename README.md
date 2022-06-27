@@ -558,6 +558,7 @@ Anatomy of a Redis command
 ---
 
 All the Redis commands are defined in the following way:
+所有redis命令再下面函数定义：
 
     void foobarCommand(client *c) {
         printf("%s",c->argv[1]->ptr); /* Do something with the argument. */
@@ -581,6 +582,7 @@ a few toy commands can be a good exercise to get familiar with the code base.
 
 There are also many other files not described here, but it is useless to
 cover everything. We just want to help you with the first steps.
+还有许多其他文件没有在这里描述，但是覆盖所有内容是无用的。我们只是想帮你迈出第一步。
 Eventually you'll find your way inside the Redis code base :-)
 
 Enjoy!
